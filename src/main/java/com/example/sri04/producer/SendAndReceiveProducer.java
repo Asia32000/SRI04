@@ -20,7 +20,7 @@ public class SendAndReceiveProducer {
     private final JmsMessagingTemplate jmsMessagingTemplate;
     private final static Logger LOG = LoggerFactory.getLogger(SendAndReceiveProducer.class);
 
-    @Scheduled(fixedRate = 2000)
+//    @Scheduled(fixedRate = 2000)
     public void sendAndReceive() {
         HelloMessage message = HelloMessage.builder()
                 .id(HelloMessage.nextId())
