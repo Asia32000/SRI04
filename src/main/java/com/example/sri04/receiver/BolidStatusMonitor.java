@@ -5,18 +5,23 @@ import com.example.sri04.model.BolidMessage;
 import com.example.sri04.model.FuelLevel;
 import com.example.sri04.model.WarningMessage;
 import jakarta.jms.Message;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.ranges.Range;
+import org.springframework.jms.core.JmsTemplate;
 
+@RequiredArgsConstructor
 @Component
 public class BolidStatusMonitor {
     private final static Logger LOG = LoggerFactory.getLogger(BolidStatusMonitor.class);
+    private final JmsTemplate jmsTemplate;
+
     @JmsListener(destination = JmsConfig.TOPIC_BOLID, containerFactory = "topicConnectionFactory")
     public void receiveBolidMessage(@Payload BolidMessage convertedMessage,
                                     @Headers MessageHeaders messageHeaders,
@@ -39,9 +44,15 @@ public class BolidStatusMonitor {
                 isOilPressureDangerous ||
                 fuelLevel == FuelLevel.VERY_LOW
         ) {
-            LOG.info("Mamy awarię");
+            WarningMessage warningMessage = WarningMessage.builder()
+                    .message("There was a car breakdown")
+                    .build();
+            jmsTemplate.convertAndSend(JmsConfig.TOPIC_STATUS_MONITOR_BREAKDOWN, warningMessage);
         } else if (isTemperatureIncorrect || isTirePressureIncorrect || isOilPressureIncorrect) {
-            LOG.info("Mamy usterkę");
+            WarningMessage warningMessage = WarningMessage.builder()
+                    .message("There was a car failure")
+                    .build();
+            jmsTemplate.convertAndSend(JmsConfig.TOPIC_STATUS_MONITOR_FAULT, warningMessage);
         }
     }
 }

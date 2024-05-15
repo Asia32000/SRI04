@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class HelloResponse {
+public class DriverMessage {
     private static long idIndex = 0;
 
     public static long nextId() { return idIndex++; }
@@ -22,6 +22,5 @@ public class HelloResponse {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
     private long id;
-    private long correlatedMessageId;
     private String message;
 }
