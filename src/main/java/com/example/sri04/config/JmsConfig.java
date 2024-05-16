@@ -19,8 +19,6 @@ import org.springframework.jms.support.destination.DynamicDestinationResolver;
 @Configuration
 @EnableJms
 public class JmsConfig {
-    public static final String QUEUE_HELLO_WORLD = "HELLO.QUEUE";
-    public static final String TOPIC_HELLO_WORLD = "HELLO.TOPIC";
     public static final String TOPIC_BOLID = "BOLID.TOPIC";
     public static final String TOPIC_STATUS_MONITOR_FAULT = "MONITOR.FAULT.TOPIC";
     public static final String TOPIC_STATUS_MONITOR_BREAKDOWN = "MONITOR.BREAKDOWN.TOPIC";

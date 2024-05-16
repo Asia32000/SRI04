@@ -44,13 +44,42 @@ public class BolidStatusMonitor {
                 isOilPressureDangerous ||
                 fuelLevel == FuelLevel.VERY_LOW
         ) {
+            String breakdownMessage = "";
+            if (isTemperatureDangerous) {
+                breakdownMessage += String.format("Dangerous temperature: (%s)\n", engTemperature);
+            }
+
+            if (isTirePressureDangerous) {
+                breakdownMessage = String.format("Dangerous tire pressure: (%s)\n", tirePressure);
+            }
+
+            if (isOilPressureDangerous) {
+                breakdownMessage = String.format("Dangerous oil pressure: (%s)\n", oilPressure);
+            }
+
+            if (fuelLevel == FuelLevel.VERY_LOW) {
+                breakdownMessage = String.format("Dangerous fuel level: (%s)\n", fuelLevel);
+            }
             WarningMessage warningMessage = WarningMessage.builder()
-                    .message("There was a car breakdown")
+                    .message(String.format("There was a car breakdown: %s", breakdownMessage))
                     .build();
             jmsTemplate.convertAndSend(JmsConfig.TOPIC_STATUS_MONITOR_BREAKDOWN, warningMessage);
         } else if (isTemperatureIncorrect || isTirePressureIncorrect || isOilPressureIncorrect) {
+            String faultMessage = "";
+            if (isTemperatureIncorrect) {
+                faultMessage += String.format("Incorrect temperature (%s)\n", engTemperature);
+            }
+
+            if (isTirePressureIncorrect) {
+                faultMessage += String.format("Incorrect tire pressure (%s)\n", tirePressure);
+            }
+
+            if (isOilPressureIncorrect) {
+                faultMessage += String.format("Incorrect oil pressure (%s)\n", oilPressure);
+            }
+
             WarningMessage warningMessage = WarningMessage.builder()
-                    .message("There was a car failure")
+                    .message(String.format("There was a car failure: %s", faultMessage))
                     .build();
             jmsTemplate.convertAndSend(JmsConfig.TOPIC_STATUS_MONITOR_FAULT, warningMessage);
         }
